@@ -41,16 +41,25 @@ class TaskDetailFragmentTest {
 
     @Test
     fun activeTaskDetails_DisplayedInUi() = runTest {
-        // GIVEN - Add active task to the DB
+        // GIVEN: 저장소에 진행 중인 작업을 넣는다.
+        val activeTask = Task("Task Title", "Task Description", false)
+        repository.saveTask(activeTask)
 
-        // WHEN - Details fragment launched to display task
+        // WHEN: 해당 작업의 상세 화면을 연다.
+        val args = TaskDetailFragmentArgs(activeTask.id).toBundle()
+        launchFragmentInContainer<TaskDetailFragment>(args, R.style.AppTheme)
 
-        // (Optional for explanation) Pause here for 2 seconds to visually confirm fragment launching
-        Thread.sleep(2000)
+        // THEN: 제목, 설명, 완료 여부가 올바르게 표시된다.
+        onView(withId(R.id.task_detail_title_text))
+            .check(matches(isDisplayed()))
+            .check(matches(withText("Task Title")))
 
-        // THEN - Task details are displayed on the screen
-        // make sure that the title/description are both shown and correct
-        // and make sure the "active" checkbox is shown unchecked
+        onView(withId(R.id.task_detail_description_text))
+            .check(matches(isDisplayed()))
+            .check(matches(withText("Task Description")))
 
+        onView(withId(R.id.task_detail_complete_checkbox))
+            .check(matches(isDisplayed()))
+            .check(matches(not(isChecked())))
     }
     }
